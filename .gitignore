@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+.DS_Store
+*.db
+__pycache__/
+cover/
+migrations/
+*.pyc

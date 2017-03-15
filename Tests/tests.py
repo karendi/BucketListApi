@@ -68,51 +68,24 @@ class TestBucketList(unittest.TestCase):
         # create a user
         payload = {"first_name": "Sharon", "last_name": "Njihia",
                    "email": "sharonkaren@gmail.com", "password": "password"}
-        response = self.client.post("/v1/auth/register", data=json.dumps(payload),
-                                    content_type='application/json')
-        print(response.status_code)
+        self.client.post("/v1/auth/register", data=json.dumps(payload), content_type='application/json')
+
+        # get auth token
+        payload = {"username": "sharonkaren@gmail.com", "password": "password"}
+        token = self.client.post("/auth", data=json.dumps(payload), content_type='application/json')
+        self.token = 'JWT ' + json.loads(token.get_data(as_text=True))['access_token']
 
     def test_if_user_can_create_bucket_list(self):
         """ Test if a user can create a bucket list"""
 
-        # generate a token for adding the data
-        user_credentials = {"email": "sharonkaren@gmail.com", "password": "password"}
-        auth_token = self.client.post("/auth", data=json.dumps(user_credentials),
-                                      content_type='application/json')
-        print(auth_token.data)
-
         # create a bucket list
+
         payload = {"bucket_list_id": 89, "bucket_list_name": "sharon", "created_by": 10012}
         response = self.client.post("/v1/bucketlists", data=json.dumps(payload),
-                                    content_type='application/json')
+                                    headers={'Content-Type': 'application/json', 'Authorization': self.token})
         self.assertEqual(response.status_code, 201)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def test_if_user_can_delete_a_bucket_list(self):
+        """ Test if a user can delete a bucket list """
+        pass
 
