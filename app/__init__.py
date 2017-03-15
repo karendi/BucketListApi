@@ -22,18 +22,3 @@ api.add_resource(views.SingleBucketList, "/v1/bucketlists/<int:id>")
 api.add_resource(views.Items, "/v1/bucketlists/<int:id>/items")
 api.add_resource(views.ItemsUpdate, "/v1/bucketlists/<int:id>/items/<int:item_id>")
 jwt = JWT(flask_app, views.authenticate, views.identity)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

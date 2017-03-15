@@ -19,12 +19,3 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + BASE_DIR + '/bucket_list_test.db'
-
-
-
-
-
-
-
-
-

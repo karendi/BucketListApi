@@ -70,7 +70,7 @@ def validate_get_bucket_list_data(func):
         if not isinstance(limit_of_items, int):
             return {"message": "The limit must be an integer"}, 400
         elif not isinstance(page_no, int):
-            return {"message":"The page number should be an integer"}, 400
+            return {"message": "The page number should be an integer"}, 400
         elif not isinstance(query, str):
             return {"message": "The query parameter should be a string"}, 400
         return func(*args, **kwargs)
@@ -88,14 +88,3 @@ def validate_user_input_for_items(func):
             return{"message": "Enter all the required data"}, 400
         return func(*args, **kwargs)
     return validate_list_data
-
-
-
-
-
-
-
-
-
-
-

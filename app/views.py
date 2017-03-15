@@ -228,29 +228,3 @@ class ItemsUpdate(Resource):
                 return {"message":"The item has been deleted"}
             except Exception as e:
                 str(e)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
