@@ -66,13 +66,10 @@ def validate_get_bucket_list_data(func):
     def validate_data(*args, **kwargs):
         limit_of_items = request.args.get('limit')
         page_no = request.args.get('page')
-        query = request.args.get('q')
-        if not isinstance(limit_of_items, int):
-            return {"message": "The limit must be an integer"}, 400
-        elif not isinstance(page_no, int):
-            return {"message": "The page number should be an integer"}, 400
-        elif not isinstance(query, str):
-            return {"message": "The query parameter should be a string"}, 400
+        if not limit_of_items:
+            return {"message": "The limit must be provided"}, 400
+        elif not page_no:
+            return {"message": "The page number should be provided"}, 400
         return func(*args, **kwargs)
     return validate_data
 

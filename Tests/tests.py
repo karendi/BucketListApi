@@ -1,6 +1,7 @@
 import json
 import os
 import unittest
+from flask import url_for
 from .. import app
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -85,7 +86,10 @@ class TestBucketList(unittest.TestCase):
                                     headers={'Content-Type': 'application/json', 'Authorization': self.token})
         self.assertEqual(response.status_code, 201)
 
-    def test_if_user_can_delete_a_bucket_list(self):
-        """ Test if a user can delete a bucket list """
-        pass
+    def test_if_user_can_get_bucket_lists(self):
+        """ Test if a user can get bucket lists """
+        with app.flask_app.app_context():
+            response = self.client.get(url_for('get_and_post_get_bucket_list', limit=1, page=1),
+                                       headers={'Content-Type': 'application/json', 'Authorization': self.token})
+            self.assertEqual(response.status_code, 200)
 

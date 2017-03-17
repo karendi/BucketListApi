@@ -94,9 +94,7 @@ class BucketList(Resource):
         limit_of_items = request.args.get('limit')
         page_no = request.args.get('page')
         query = request.args.get('q')
-        if limit_of_items is None or page_no is None:
-            return {"message": "Please give the limit and the page number"}, 400
-        elif query and limit_of_items and page_no:
+        if query:
             """ if a user wants to search for a specific bucket list"""
             bucket_list_results_no_pagination = models.BucketList.query.filter(models.BucketList.bucket_list_name.like(
                 '%' + query + '%')).filter_by(created_by=current_identity.user_id).paginate(int(page_no),
@@ -104,17 +102,17 @@ class BucketList(Resource):
             if bucket_list_results_no_pagination:
                 buckets = bucket_list_results_no_pagination.items
                 bkts = [bucket for bucket in buckets]
-                return bkts
+                return bkts, 200
             else:
                 return {"message": "Bucket List '{0}'can not be found".format(query)}, 204
-
         else:
-            bucket_list_results_no_pagination = models.BucketList.query.filter_by(created_by=current_identity.user_id). \
+            """ Returns all the bucket list"""
+            bucket_list_results_no_pagination = models.BucketList.query.filter_by(created_by=current_identity.user_id).\
                 paginate(int(page_no), int(limit_of_items), False)
             if bucket_list_results_no_pagination:
                 buckets = bucket_list_results_no_pagination.items
                 bkts = [bucket for bucket in buckets]
-                return bkts
+                return bkts, 200
             else:
                 return {"message": "Bucket Lists can not be found"}, 204
 
