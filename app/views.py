@@ -118,15 +118,14 @@ class BucketList(Resource):
 
 
 class SingleBucketList(Resource):
-    @jwt_required
+    @jwt_required()
     @marshal_with(bucket_list_serializer)
-    def get(self, id):
-        """ gets a single bucket list"""
-        bucket_list_id = id
-        bucket_list = db.session.query(models.BucketList).filter_by(bucket_list_id=bucket_list_id).first()
+    def get(self,id):
+        """ gets a single bucket list """
+        bucket_list = db.session.query(models.BucketList).filter_by(bucket_list_id=id).first()
         if bucket_list is None:
-            return {"message":"The bucket list does not exist"}, 401
-        return bucket_list
+            return {"message": "The bucket list does not exist"}, 204
+        return 200
 
     @jwt_required()
     def delete(self, id):
@@ -223,6 +222,6 @@ class ItemsUpdate(Resource):
             try:
                 db.session.delete(existing_item)
                 db.session.commit()
-                return {"message":"The item has been deleted"}
+                return {"message": "The item has been deleted"}, 200
             except Exception as e:
                 str(e)
