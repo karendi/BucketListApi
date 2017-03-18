@@ -8,7 +8,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 flask_app = Flask(__name__)
 flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + BASE_DIR + '/bucket_list.db'
 flask_app.config['JWT_SECRET_KEY'] = 'test123'
-flask_app.config['SERVER_NAME'] = '0.0.0.0'
 
 
 db = SQLAlchemy(flask_app)
@@ -19,7 +18,7 @@ from . import views
 api = Api(flask_app)
 api.add_resource(views.UserRegistration, "/v1/auth/register")
 api.add_resource(views.BucketList, "/v1/bucketlists", endpoint='get_and_post_get_bucket_list')
-api.add_resource(views.SingleBucketList, "/v1/bucketlists/<int:id>")
-api.add_resource(views.Items, "/v1/bucketlists/<int:id>/items")
-api.add_resource(views.ItemsUpdate, "/v1/bucketlists/<int:id>/items/<int:item_id>")
+api.add_resource(views.SingleBucketList, '/v1/bucketlists/<int:id>', endpoint='single_bucket_list')
+api.add_resource(views.Items, "/v1/bucketlists/<int:id>/items", endpoint='items')
+api.add_resource(views.ItemsUpdate, "/v1/bucketlists/<int:id>/items/<int:item_id>", endpoint='items_update')
 jwt = JWT(flask_app, views.authenticate, views.identity)
