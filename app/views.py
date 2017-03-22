@@ -201,7 +201,7 @@ class ItemsUpdate(Resource):
                     existing_item.completed = new_status
                     existing_item.date_modified = datetime.datetime.utcnow()
                     db.session.commit()
-                    return {"message": "The item was edited successfully"}
+                    return {"message": "The item was edited successfully"}, 200
 
                 except Exception as e:
                     return str(e)
