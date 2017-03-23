@@ -1,4 +1,5 @@
 import os
+import datetime
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -7,7 +8,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 flask_app = Flask(__name__)
 flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + BASE_DIR + '/bucket_list.db'
-flask_app.config['JWT_SECRET_KEY'] = 'test123'
+flask_app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
+flask_app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(days=1)
 
 
 db = SQLAlchemy(flask_app)
