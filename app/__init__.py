@@ -17,7 +17,7 @@ from . import views
 
 api = Api(flask_app)
 api.add_resource(views.UserRegistration, "/v1/auth/register", endpoint='user_registration')
-api.add_resource(views.BucketList, "/v1/bucketlists", endpoint='get_and_post_get_bucket_list')
+api.add_resource(views.BucketList, "/v1/bucketlists", endpoint='get_and_post_bucket_list')
 api.add_resource(views.SingleBucketList, '/v1/bucketlists/<int:id>', endpoint='single_bucket_list')
 api.add_resource(views.Items, "/v1/bucketlists/<int:id>/items", endpoint='items')
 api.add_resource(views.ItemsUpdate, "/v1/bucketlists/<int:id>/items/<int:item_id>", endpoint='items_update')
