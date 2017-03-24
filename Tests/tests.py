@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 class BaseTestCase(unittest.TestCase):
     """ setting up the test database"""
     def setUp(self):
-        app.flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + BASE_DIR + '/bucket_list_test.db'
+        app.flask_app.config.from_object('BucketListApi.flask_settings.config_default.TestingConfig')
         app.flask_app.config['SERVER_NAME'] = '127.0.0.0'
         app.db.session.close()
         app.db.create_all()
