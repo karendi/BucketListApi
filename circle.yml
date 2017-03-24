@@ -1,0 +1,5 @@
+machine:
+  python:
+    version: 3.6
+dependancies:
+  - pip install -r requirements.txt
