@@ -6,6 +6,6 @@ dependencies:
     - pip install -r requirements.txt
 test:
   override:
-    - nosetests -v --cover-package=app  
+    - nosetests --with-coverage
   post:
       - coveralls
