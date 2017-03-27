@@ -6,4 +6,4 @@ cover/
 migrations/
 *.pyc
 .idea/
-.coverage
+/.coverage

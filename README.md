@@ -32,6 +32,6 @@ To work with the api locally, you can get Postman client installed.
            1. python server.py db init
            2.python server.py db migrate
            3.python server.py db upgrade
-           
+
 4. Run python run_flask.py to get your flask server up and use the endpoints stated above
 
