@@ -16,3 +16,20 @@ ENDPOINTS
     8. POST /bucketlists/<id>/items/             Create a new item in bucket list
     9. PUT /bucketlists/<id>/items/<item_id>     Update a bucket list item
     10.DELETE /bucketlists/<id>/items/<item_id>  Delete an item in a bucket list
+
+
+INSTALLATION AND SET UP
+----------------------------------------------------------------------------------
+
+You need to have Python installed to run this API locally.
+(Install Python 3.6.0, if you don't have it already)
+To work with the api locally, you can get Postman client installed.
+
+1. On your terminal run git clone [--url link of the repo--]
+2. Run pip install -r requirements.txt to get all the requirements for the project for your virtual environment.
+3. Run database migrations, by running the following commands:
+            python server.py db init
+            python server.py db migrate
+            python server.py db upgrade
+4. Run python run_flask.py to get your flask server up and use the endpoints stated above
+
