@@ -5,5 +5,5 @@ __pycache__/
 cover/
 migrations/
 *.pyc
-.idea/
+*.xml
 /.coverage
