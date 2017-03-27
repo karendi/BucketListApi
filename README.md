@@ -28,8 +28,10 @@ To work with the api locally, you can get Postman client installed.
 1. On your terminal run git clone [--url link of the repo--]
 2. Run pip install -r requirements.txt to get all the requirements for the project for your virtual environment.
 3. Run database migrations, by running the following commands:
-            python server.py db init
-            python server.py db migrate
-            python server.py db upgrade
+
+           1. python server.py db init
+           2.python server.py db migrate
+           3.python server.py db upgrade
+           
 4. Run python run_flask.py to get your flask server up and use the endpoints stated above
 
