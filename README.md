@@ -1,6 +1,5 @@
-
-[![Coverage Status](https://coveralls.io/repos/github/karendi/BucketListApi/badge.svg?branch=develop)](https://coveralls.io/github/karendi/BucketListApi?branch=develop)
-
+[![CircleCI](https://circleci.com/gh/karendi/BucketListApi/tree/develop.svg?style=svg)](https://circleci.com/gh/karendi/BucketListApi/tree/develop)
+[![Coverage Status](https://coveralls.io/repos/github/karendi/BucketListApi/badge.svg?branch=master)](https://coveralls.io/github/karendi/BucketListApi?branch=master)
 Bucket List is a list of things that one has not done before but wants to do before dying.This is
 an API for an online Bucket List service that has been developed using Flask.
 
