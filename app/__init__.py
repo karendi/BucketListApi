@@ -7,7 +7,7 @@ from flask_jwt import JWT
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 flask_app = Flask(__name__)
-flask_app.config.from_object('BucketListApi.flask_settings.config_default.Config')
+flask_app.config.from_object('flask_settings.config_default.Config')
 flask_app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 flask_app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(days=1)
 

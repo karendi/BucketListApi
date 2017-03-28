@@ -2,7 +2,7 @@ import json
 import os
 import unittest
 from flask import url_for
-from .. import app
+from app import flask_app , db
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -10,13 +10,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 class BaseTestCase(unittest.TestCase):
     """ setting up the test database"""
     def setUp(self):
-        app.flask_app.config.from_object('BucketListApi.flask_settings.config_default.TestingConfig')
-        app.flask_app.config['SERVER_NAME'] = '127.0.0.0'
-        app.db.session.close()
-        app.db.create_all()
-        self.client = app.flask_app.test_client()
+        flask_app.config.from_object('flask_settings.config_default.TestingConfig')
+        flask_app.config['SERVER_NAME'] = '127.0.0.0'
+        db.session.close()
+        db.create_all()
+        self.client = flask_app.test_client()
 
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # create a user
             payload = {"first_name": "Sharon", "last_name": "Njihia",
                        "email": "sharonkaren@gmail.com", "password": "password"}
@@ -31,15 +31,15 @@ class BaseTestCase(unittest.TestCase):
 class TestRegistration(unittest.TestCase):
     def setUp(self):
         """ setting up the test database """
-        app.flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + BASE_DIR + '/bucket_list_test.db'
-        app.db.session.close()
-        app.db.drop_all()
-        app.db.create_all()
-        self.client = app.flask_app.test_client()
+        flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + BASE_DIR + '/bucket_list_test.db'
+        db.session.close()
+        db.drop_all()
+        db.create_all()
+        self.client = flask_app.test_client()
 
     def test_user_registration(self):
         """ Tests that checks if a user is able to register successfully"""
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # create a user
             payload = {"first_name": "Sharon", "last_name": "Njihia",
                        "email": "sharonkaren@gmail.com", "password": "password"}
@@ -49,7 +49,7 @@ class TestRegistration(unittest.TestCase):
 
     def test_the_user_payload_being_sent(self):
         """ Tests that the payload with user data has all the required info"""
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # create a user
             payload = {}
             response = self.client.post(url_for('user_registration'), data=json.dumps(payload),
@@ -58,7 +58,7 @@ class TestRegistration(unittest.TestCase):
 
     def test_the_user_exists(self):
         """ Tests that when a user exists , they are not registered again"""
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # register the person
             payload = {"first_name": "Sharon", "last_name": "Njihia",
                        "email": "sharonkaren@gmail.com", "password": "password"}
@@ -72,14 +72,14 @@ class TestRegistration(unittest.TestCase):
             self.assertEqual(response.status_code, 401)
 
     def tearDown(self):
-        app.db.session.remove()
+        db.session.remove()
 
 
 class TestBucketList(BaseTestCase):
     def test_if_user_can_create_bucket_list(self):
         """ Test if a user can create a bucket list"""
         # create a bucket list
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             payload = {"bucket_list_id": 89, "bucket_list_name": "sharon", "created_by": 10012}
             response = self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json', 'Authorization': self.token})
@@ -87,14 +87,14 @@ class TestBucketList(BaseTestCase):
 
     def test_if_user_can_get_bucket_lists(self):
         """ Test if a user can get bucket lists """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             response = self.client.get(url_for('get_and_post_bucket_list', limit=1, page=1),
                                        headers={'Content-Type': 'application/json', 'Authorization': self.token})
             self.assertEqual(response.status_code, 200)
 
     def test_if_the_user_can_filter_bucket_lists(self):
         """ Test if the user can filter the bucket list results """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             response = self.client.get(url_for('get_and_post_bucket_list', limit=1, page=1, q='xys'),
                                        headers={'Content-Type': 'application/json', 'Authorization': self.token})
             self.assertEqual(response.status_code, 200)
@@ -103,7 +103,7 @@ class TestBucketList(BaseTestCase):
 class TestSingleBucketList(BaseTestCase):
     def test_if_the_user_cant_get_a_bucket_list_if_it_does_not_exist(self):
         """ Test if the user can not get a single bucket list if it does not exist """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             response = self.client.get(url_for('single_bucket_list', id=89),
                                        headers={'Content-Type': 'application/json', 'Authorization': self.token})
             print(response.status_code)
@@ -111,7 +111,7 @@ class TestSingleBucketList(BaseTestCase):
 
     def test_the_user_can_get_a_single_bucket_list(self):
         """ Test that the user can get a single bucket list """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # create a bucket list
             payload = {"bucket_list_id": 100, "bucket_list_name": "sharon", "created_by": 10012}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
@@ -124,7 +124,7 @@ class TestSingleBucketList(BaseTestCase):
 
     def test_the_user_can_delete_a_single_bucket_list(self):
         """ Test that the user can delete a single bucket list """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
 
             # create a bucket list
             payload = {"bucket_list_id": 101, "bucket_list_name": "sharon", "created_by": 10012}
@@ -136,7 +136,7 @@ class TestSingleBucketList(BaseTestCase):
 
     def test_the_user_cannot_delete_a_single_bucket_list_that_does_not_exist(self):
         """ Test that the user can not delete a single bucket list that does not exist """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # delete the bucket list
             response = self.client.delete(url_for('single_bucket_list', id=200),
                                           headers={'Content-Type': 'application/json', 'Authorization': self.token})
@@ -147,7 +147,7 @@ class TestItemResource(BaseTestCase):
     def test_if_the_user_can_create_a_bucket_list_item(self):
         """ Tests if the user can create a bucket list item """
 
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # create a bucket list
             payload = {"bucket_list_id": 103, "bucket_list_name": "sharon", "created_by": 10012}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
@@ -165,7 +165,7 @@ class TestItemResource(BaseTestCase):
     def test_that_the_user_cannot_enter_a_bucket_list_item_with_no_existing_bucket_list(self):
         """ Test that the user can not enter a bucket list item for a non existing bucket list """
         item_payload = {"list_id": 900, "item_name": "Valentine's day", "completed": "True"}
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             response = self.client.post(url_for('items', id=10), data=json.dumps(item_payload),
                                         headers={'Content-Type': 'application/json', 'Authorization': self.token}
                                         )
@@ -175,14 +175,14 @@ class TestItemResource(BaseTestCase):
 class TestItemsUpdate(BaseTestCase):
     def test_if_the_user_can_not_delete_a_bucket_list_item_that_does_not_exist(self):
         """ Test if the user can not delete a bucket list item that does not exist """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             response = self.client.delete(url_for('items_update', id=103, item_id=10),
                                           headers={'Content-Type': 'application/json', 'Authorization': self.token})
             self.assertEqual(response.status_code, 401)
 
     def test_the_user_can_delete_a_bucket_list_item(self):
         """ Test that the user can delete a bucket list item """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # create a bucket list
             payload = {"bucket_list_id": 103, "bucket_list_name": "sharon", "created_by": 10012}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
@@ -200,7 +200,7 @@ class TestItemsUpdate(BaseTestCase):
 
     def test_if_the_user_can_update_a_bucket_list_item(self):
         """ Test if the user can update a bucket list item"""
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             # create a bucket list
             payload = {"bucket_list_id": 103, "bucket_list_name": "sharon", "created_by": 10012}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
@@ -220,7 +220,7 @@ class TestItemsUpdate(BaseTestCase):
 
     def test_the_user_can_not_update_a_bucket_list_item_that_does_not_exist(self):
         """ Test the user can not update a bucket list item that does not exist """
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             update_item_payload = {"item_name": "XYZ", "completed": "False"}
             list_response = self.client.put(url_for('items_update', id=789, item_id=90),
                                             data=json.dumps(update_item_payload),
@@ -230,7 +230,7 @@ class TestItemsUpdate(BaseTestCase):
 
     def test_the_user_can_not_update_with_an_empty_payload(self):
         """ Test that the user cannot update with an empty payload"""
-        with app.flask_app.app_context():
+        with flask_app.app_context():
             update_item_payload = {}
             list_response = self.client.put(url_for('items_update', id=789, item_id=90),
                                             data=json.dumps(update_item_payload),
