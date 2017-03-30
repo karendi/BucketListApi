@@ -2,7 +2,7 @@ import json
 import os
 import unittest
 from flask import url_for
-from app import flask_app , db
+from app import flask_app, db
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -31,7 +31,7 @@ class BaseTestCase(unittest.TestCase):
 class TestRegistration(unittest.TestCase):
     def setUp(self):
         """ setting up the test database """
-        flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + BASE_DIR + '/bucket_list_test.db'
+        flask_app.config.from_object('flask_settings.config_default.TestingConfig')
         db.session.close()
         db.drop_all()
         db.create_all()
