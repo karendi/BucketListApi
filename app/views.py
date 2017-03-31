@@ -104,7 +104,7 @@ class BucketList(Resource):
                 bkts = [bucket for bucket in buckets]
                 return bkts, 200
             else:
-                return {"message": "Bucket List '{0}'can not be found".format(query)}, 204
+                return {"message": "Bucket List '{0}'can not be found".format(query)}, 404
         else:
             """ Returns all the bucket list"""
             bucket_list_results_no_pagination = models.BucketList.query.filter_by(created_by=current_identity.user_id).\
@@ -114,7 +114,7 @@ class BucketList(Resource):
                 bkts = [bucket for bucket in buckets]
                 return bkts, 200
             else:
-                return {"message": "Bucket Lists can not be found"}, 204
+                return {"message": "Bucket Lists can not be found"}, 404
 
 
 class SingleBucketList(Resource):
@@ -135,7 +135,7 @@ class SingleBucketList(Resource):
 
         delete_bucket_list = db.session.query(models.BucketList).filter_by(bucket_list_id=bucket_list_id).first()
         if delete_bucket_list is None:
-            return {"message": "The bucket list does not exist"}, 204
+            return {"message": "The bucket list does not exist"}, 404
         else:
             db.session.delete(delete_bucket_list)
             db.session.commit()
