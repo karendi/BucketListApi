@@ -124,7 +124,7 @@ class SingleBucketList(Resource):
         """ gets a single bucket list """
         bucket_list = db.session.query(models.BucketList).filter_by(bucket_list_id=id).first()
         if bucket_list is None:
-            return {"message": "The bucket list does not exist"}, 204
+            return {"message": "The bucket list does not exist"}, 404
         return 200
 
     @jwt_required()

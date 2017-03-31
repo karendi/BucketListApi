@@ -115,7 +115,7 @@ class TestSingleBucketList(BaseTestCase):
             # create a bucket list
             payload = {"bucket_list_id": 100, "bucket_list_name": "sharon", "created_by": 10012}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
-                                        headers={'Content-Type': 'application/json', 'Authorization': self.token})
+                             headers={'Content-Type': 'application/json', 'Authorization': self.token})
             # get the single bucket list
             response = self.client.get(url_for('single_bucket_list', id=100),
                                        headers={'Content-Type': 'application/json', 'Authorization': self.token}
