@@ -25,13 +25,17 @@ You need to have Python installed to run this API locally.
 (Install Python 3.6.0, if you don't have it already)
 To work with the api locally, you can get Postman client installed.
 
-1. On your terminal run git clone [--url link of the repo--]
-2. Run pip install -r requirements.txt to get all the requirements for the project for your virtual environment.
-3. Run database migrations, by running the following commands:
+1. Make a virtual environment , preferably using virtualenv wrapper,by running mkvirtualenv [Name-of your environment] 
+2. On your terminal run git clone [--url link of the repo--]
+3. Run pip install -r requirements.txt to get all the requirements for the project for your virtual environment.
+4. Run database migrations, by running the following commands:
 
-           1. python server.py db init
-           2.python server.py db migrate
-           3.python server.py db upgrade
+           1.python migrate.py db init
+           2.python migrate.py db migrate
+           3.python migrate.py db upgrade
 
-4. Run python run_flask.py to get your flask server up and use the endpoints stated above
+5. Set the environment variable JWT_SECRET_KEY in your .env file but if you are using virtualenv wrapper have it in your
+$VIRTUAL_ENV/bin/postactivate
+6. Run python run_flask.py to get your flask server up and use the endpoints stated above.
+7.You can run tests using the following command : nosetests -v --cover-package=app  --with-coverage tests/* --cover-html
 
