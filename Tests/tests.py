@@ -107,7 +107,7 @@ class TestSingleBucketList(BaseTestCase):
             response = self.client.get(url_for('single_bucket_list', id=89),
                                        headers={'Content-Type': 'application/json', 'Authorization': self.token})
             print(response.status_code)
-            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.status_code, 404)
 
     def test_the_user_can_get_a_single_bucket_list(self):
         """ Test that the user can get a single bucket list """
@@ -140,7 +140,7 @@ class TestSingleBucketList(BaseTestCase):
             # delete the bucket list
             response = self.client.delete(url_for('single_bucket_list', id=200),
                                           headers={'Content-Type': 'application/json', 'Authorization': self.token})
-            self.assertEqual(response.status_code, 204)
+            self.assertEqual(response.status_code, 404)
 
 
 class TestItemResource(BaseTestCase):
