@@ -1,7 +1,5 @@
 from functools import wraps
 from flask import request
-from . import models
-from . import db
 
 """ Validation decorators for the data
  being posted by the user"""
@@ -66,12 +64,25 @@ def validate_get_bucket_list_data(func):
     def validate_data(*args, **kwargs):
         limit_of_items = request.args.get('limit')
         page_no = request.args.get('page')
-        if not limit_of_items:
-            return {"message": "The limit must be provided"}, 400
-        elif not page_no:
-            return {"message": "The page number should be provided"}, 400
-        return func(*args, **kwargs)
+        if limit_of_items and page_no :
+            if limit_of_items.isdigit() and page_no.isdigit():
+                return func(*args, **kwargs)
+            elif not limit_of_items.isdigit() or not page_no.isdigit():
+                return {"message": "The limit and page number must be integers"}
+        else:
+            return func(*args, **kwargs)
     return validate_data
+
+
+def validate_bucket_list_update_data(func):
+    """ validates data that is required to update a bucket list"""
+    @wraps(func)
+    def validate_bucket_list_update_data(*args, **kwargs):
+        update_data = request.json
+        if not update_data:
+            return {"message": "You have to provide the bucket list name"}
+        return func(*args, **kwargs)
+    return validate_bucket_list_update_data
 
 
 def validate_user_input_for_items(func):
