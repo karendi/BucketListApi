@@ -96,21 +96,21 @@ class BucketList(Resource):
         query = request.args.get('q')
         if query:
             """ if a user wants to search for a specific bucket list"""
-            bucket_list_results_no_pagination = models.BucketList.query.filter(models.BucketList.bucket_list_name.like(
+            bucket_list_results_pagination = models.BucketList.query.filter(models.BucketList.bucket_list_name.like(
                 '%' + query + '%')).filter_by(created_by=current_identity.user_id).paginate(int(page_no),
                                                                                             int(limit_of_items), False)
-            if bucket_list_results_no_pagination:
-                buckets = bucket_list_results_no_pagination.items
+            if bucket_list_results_pagination:
+                buckets = bucket_list_results_pagination.items
                 bkts = [bucket for bucket in buckets]
                 return bkts, 200
             else:
                 return {"message": "Bucket List '{0}'can not be found".format(query)}, 404
         else:
             """ Returns all the bucket list"""
-            bucket_list_results_no_pagination = models.BucketList.query.filter_by(created_by=current_identity.user_id).\
+            all_bucket_list_results = models.BucketList.query.filter_by(created_by=current_identity.user_id).\
                 paginate(int(page_no), int(limit_of_items), False)
-            if bucket_list_results_no_pagination:
-                buckets = bucket_list_results_no_pagination.items
+            if all_bucket_list_results:
+                buckets = all_bucket_list_results.items
                 bkts = [bucket for bucket in buckets]
                 return bkts, 200
             else:
@@ -122,7 +122,7 @@ class SingleBucketList(Resource):
     @marshal_with(bucket_list_serializer)
     def get(self,id):
         """ gets a single bucket list """
-        bucket_list = db.session.query(models.BucketList).filter_by(bucket_list_id=id).first()
+        bucket_list = db.session.query(models.BucketList).get(id)
         if bucket_list is None:
             return {"message": "The bucket list does not exist"}, 404
         return 200
@@ -133,7 +133,7 @@ class SingleBucketList(Resource):
         # pick the id of the bucket list
         bucket_list_id = id
 
-        delete_bucket_list = db.session.query(models.BucketList).filter_by(bucket_list_id=bucket_list_id).first()
+        delete_bucket_list = db.session.query(models.BucketList).get(bucket_list_id)
         if delete_bucket_list is None:
             return {"message": "The bucket list does not exist"}, 404
         else:
@@ -153,12 +153,12 @@ class Items(Resource):
         completed = items_data.get('completed')
 
         # check if the bucket_list exists
-        existing_bucket_list = db.session.query(models.BucketList).filter_by(bucket_list_id=id).first()
+        existing_bucket_list = db.session.query(models.BucketList).get(id)
         if existing_bucket_list is None:
             return {"message": "The bucket list does not exist, so you can't add an item"}, 401
         else:
             # check if the item exists
-            existing_item = db.session.query(models.Items).filter_by(list_id=item_id).first()
+            existing_item = db.session.query(models.Items).get(item_id)
             if existing_item is not None:
                 return {"message": "An item with the same ID already exists"}, 401
             else:

@@ -11,16 +11,15 @@ class BaseTestCase(unittest.TestCase):
     """ setting up the test database"""
     def setUp(self):
         flask_app.config.from_object('flask_settings.config_default.TestingConfig')
-        flask_app.config['SERVER_NAME'] = '127.0.0.0'
         db.session.close()
         db.create_all()
         self.client = flask_app.test_client()
 
         with flask_app.app_context():
             # create a user
-            payload = {"first_name": "Sharon", "last_name": "Njihia",
+            user_data_payload = {"first_name": "Sharon", "last_name": "Njihia",
                        "email": "sharonkaren@gmail.com", "password": "password"}
-            self.client.post(url_for('user_registration'), data=json.dumps(payload),
+            self.client.post(url_for('user_registration'), data=json.dumps(user_data_payload),
                              content_type='application/json')
             # get auth token
             payload = {"username": "sharonkaren@gmail.com", "password": "password"}
@@ -28,22 +27,14 @@ class BaseTestCase(unittest.TestCase):
             self.token = 'JWT ' + json.loads(token.get_data(as_text=True))['access_token']
 
 
-class TestRegistration(unittest.TestCase):
-    def setUp(self):
-        """ setting up the test database """
-        flask_app.config.from_object('flask_settings.config_default.TestingConfig')
-        db.session.close()
-        db.drop_all()
-        db.create_all()
-        self.client = flask_app.test_client()
-
+class TestRegistration(BaseTestCase):
     def test_user_registration(self):
         """ Tests that checks if a user is able to register successfully"""
         with flask_app.app_context():
             # create a user
-            payload = {"first_name": "Sharon", "last_name": "Njihia",
-                       "email": "sharonkaren@gmail.com", "password": "password"}
-            response = self.client.post(url_for('user_registration'), data=json.dumps(payload),
+            user_data_payload = {"first_name": "Sharon", "last_name": "Njihia",
+                                 "email": "sharon@gmail.com", "password": "password"}
+            response = self.client.post(url_for('user_registration'), data=json.dumps(user_data_payload),
                                         content_type='application/json')
             self.assertEqual(response.status_code, 201)
 
@@ -51,19 +42,14 @@ class TestRegistration(unittest.TestCase):
         """ Tests that the payload with user data has all the required info"""
         with flask_app.app_context():
             # create a user
-            payload = {}
-            response = self.client.post(url_for('user_registration'), data=json.dumps(payload),
+            empty_payload = {}
+            response = self.client.post(url_for('user_registration'), data=json.dumps(empty_payload),
                                         content_type='application/json')
             self.assertEqual(response.status_code, 400)
 
     def test_the_user_exists(self):
         """ Tests that when a user exists , they are not registered again"""
         with flask_app.app_context():
-            # register the person
-            payload = {"first_name": "Sharon", "last_name": "Njihia",
-                       "email": "sharonkaren@gmail.com", "password": "password"}
-            self.client.post(url_for('user_registration'), data=json.dumps(payload),
-                             content_type='application/json')
             # try and register the user again
             payload = {"first_name": "Sharon", "last_name": "Njihia",
                        "email": "sharonkaren@gmail.com", "password": "password"}
@@ -72,7 +58,7 @@ class TestRegistration(unittest.TestCase):
             self.assertEqual(response.status_code, 401)
 
     def tearDown(self):
-        db.session.remove()
+        db.drop_all()
 
 
 class TestBucketList(BaseTestCase):
@@ -80,8 +66,8 @@ class TestBucketList(BaseTestCase):
         """ Test if a user can create a bucket list"""
         # create a bucket list
         with flask_app.app_context():
-            payload = {"bucket_list_id": 89, "bucket_list_name": "sharon", "created_by": 10012}
-            response = self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
+            new_bucketlist_payload = {"bucket_list_id": 234, "bucket_list_name": "sharon", "created_by": 10012}
+            response = self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(new_bucketlist_payload),
                                         headers={'Content-Type': 'application/json', 'Authorization': self.token})
             self.assertEqual(response.status_code, 201)
 
@@ -99,6 +85,9 @@ class TestBucketList(BaseTestCase):
                                        headers={'Content-Type': 'application/json', 'Authorization': self.token})
             self.assertEqual(response.status_code, 200)
 
+    def tearDown(self):
+        db.drop_all()
+
 
 class TestSingleBucketList(BaseTestCase):
     def test_if_the_user_cant_get_a_bucket_list_if_it_does_not_exist(self):
@@ -113,8 +102,8 @@ class TestSingleBucketList(BaseTestCase):
         """ Test that the user can get a single bucket list """
         with flask_app.app_context():
             # create a bucket list
-            payload = {"bucket_list_id": 100, "bucket_list_name": "sharon", "created_by": 10012}
-            self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
+            new_bucket_list_payload = {"bucket_list_id": 100, "bucket_list_name": "sharon", "created_by": 10012}
+            self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(new_bucket_list_payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
             # get the single bucket list
             response = self.client.get(url_for('single_bucket_list', id=100),
@@ -127,8 +116,8 @@ class TestSingleBucketList(BaseTestCase):
         with flask_app.app_context():
 
             # create a bucket list
-            payload = {"bucket_list_id": 101, "bucket_list_name": "sharon", "created_by": 10012}
-            self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
+            new_bucket_list_payload = {"bucket_list_id": 101, "bucket_list_name": "sharon", "created_by": 10012}
+            self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(new_bucket_list_payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
             response = self.client.delete(url_for('single_bucket_list', id=101),
                                           headers={'Content-Type': 'application/json', 'Authorization': self.token})
@@ -149,8 +138,8 @@ class TestItemResource(BaseTestCase):
 
         with flask_app.app_context():
             # create a bucket list
-            payload = {"bucket_list_id": 103, "bucket_list_name": "sharon", "created_by": 10012}
-            self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
+            new_item_payload = {"bucket_list_id": 103, "bucket_list_name": "sharon", "created_by": 10012}
+            self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(new_item_payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
             # create a bucket list item
             item_payload = {"list_id": 90, "item_name": "Valentine's day", "completed": "True"}

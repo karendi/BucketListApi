@@ -11,3 +11,4 @@ class Config(object):
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + BASE_DIR + '/bucket_list_test.db'
+    SERVER_NAME = '127.0.0.0'
