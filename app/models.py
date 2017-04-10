@@ -46,7 +46,7 @@ class Items(db.Model):
     list_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     item_name = db.Column(db.String(64), index=True)
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow())
-    date_modified = db.Column(db.DateTime)
+    date_modified = db.Column(db.DateTime, default=datetime.datetime.utcnow())
     bucket_list_items_id = db.Column(db.Integer, db.ForeignKey('bucket_list.bucket_list_id'))
     completed = db.Column(db.Boolean, default=False)
     bucket_list = relationship('BucketList', back_populates="items")
