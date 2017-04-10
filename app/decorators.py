@@ -50,10 +50,10 @@ def validate_bucket_list_data(func):
         bucket_list_data = request.get_json()
         if not bucket_list_data:
             return {"message": "You have to provide the required data"}, 400
-        elif "bucket_list_id" not in bucket_list_data or "bucket_list_name" not in bucket_list_data:
-            return {"message": "You have to provide the required data"}, 400
-        elif bucket_list_data["bucket_list_id"] == ""or bucket_list_data["bucket_list_name"] == "":
-            return {"message": "You have to provide all the required data"}, 400
+        elif "bucket_list_name" not in bucket_list_data:
+            return {"message": "You have to provide the bucket list name"}, 400
+        elif bucket_list_data["bucket_list_name"] == "":
+            return {"message": "You have to provide the bucket list name"}, 400
         return func(*args, **kwargs)
     return validate_bucket_list
 
@@ -90,9 +90,9 @@ def validate_user_input_for_items(func):
     @wraps(func)
     def validate_list_data(*args, **kwargs):
         items_data = request.json
-        if "list_id" not in items_data or "item_name" not in items_data or "completed" not in items_data:
-            return {"message": "You have to provide all the required information"}, 400
-        elif items_data["list_id"] == "" or items_data["item_name"] == "" or items_data["completed"] == "":
-            return{"message": "Enter all the required data"}, 400
+        if "item_name" not in items_data or "completed" not in items_data:
+            return {"message": "You have to provide all the item name and the completed status"}, 400
+        elif items_data["item_name"] == "" or items_data["completed"] == "":
+            return{"message": "You have to provide all the item name and the completed status"}, 400
         return func(*args, **kwargs)
-    return validate_list_data
+    return validate_list_data 

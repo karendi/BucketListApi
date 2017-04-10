@@ -30,7 +30,7 @@ class UserModel(db.Model):
 
 class BucketList(db.Model):
     __tablename__ = 'bucket_list'
-    bucket_list_id = db.Column(db.Integer, primary_key=True)
+    bucket_list_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     created_by = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     bucket_list_name = db.Column(db.String(25), index=True)
     items = relationship('Items', back_populates="bucket_list")
@@ -43,7 +43,7 @@ class BucketList(db.Model):
 
 class Items(db.Model):
     __tablename__ = 'items'
-    list_id = db.Column(db.Integer, primary_key=True)
+    list_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     item_name = db.Column(db.String(64), index=True)
     date_created = db.Column(db.DateTime, default=datetime.datetime.utcnow())
     date_modified = db.Column(db.DateTime)
