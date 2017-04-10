@@ -65,25 +65,18 @@ class BucketList(Resource):
     @validate_bucket_list_data
     def post(self):
         bucket_list_data = request.json
-        bucket_list_id = bucket_list_data.get('bucket_list_id')
         bucket_list_name = bucket_list_data.get('bucket_list_name')
+        try:
+            new_bucket_list = models.BucketList(
+                                                bucket_list_name=bucket_list_name,
+                                                created_by=current_identity.user_id
+                                                )
+            db.session.add(new_bucket_list)
+            db.session.commit()
+            return {"message": "You have created a new bucket list"}, 201
 
-        # check if the bucket list with the same id exists
-        check_bucket_list = db.session.query(models.BucketList).filter_by(bucket_list_id=bucket_list_id).first()
-        if check_bucket_list is not None:
-            return {"message": "You can not enter a bucket list with a duplicated Id"}, 401
-        else:
-            try:
-                new_bucket_list = models.BucketList(bucket_list_id=bucket_list_id,
-                                                    bucket_list_name=bucket_list_name,
-                                                    created_by=current_identity.user_id
-                                                    )
-                db.session.add(new_bucket_list)
-                db.session.commit()
-                return {"message": "You have created a new bucket list"}, 201
-
-            except Exception as e:
-                return str(e)
+        except Exception as e:
+            return str(e)
 
     @jwt_required()
     @validate_get_bucket_list_data
@@ -178,7 +171,6 @@ class Items(Resource):
     def post(self, id):
         bucket_list_id = id
         items_data = request.json
-        item_id = items_data.get('list_id')
         item_name = items_data.get('item_name')
         completed = items_data.get('completed')
 
@@ -188,22 +180,17 @@ class Items(Resource):
         if existing_bucket_list is None:
             return {"message": "The bucket list does not exist, so you can't add an item"}, 401
         else:
-            # check if the item exists
-            existing_item = db.session.query(models.Items).filter_by(list_id=item_id).first()
-            if existing_item is not None:
-                return {"message": "An item with the same ID already exists"}, 401
-            else:
-                try:
-                    new_item = models.Items(list_id=item_id,
-                                            item_name=item_name,
-                                            bucket_list_items_id=bucket_list_id,
-                                            completed=completed,
-                                            )
-                    db.session.add(new_item)
-                    db.session.commit()
-                    return {"message": "The item has been created"}, 201
-                except Exception as e:
-                    return str(e)
+            try:
+                new_item = models.Items(
+                                        item_name=item_name,
+                                        bucket_list_items_id=bucket_list_id,
+                                        completed=completed,
+                                        )
+                db.session.add(new_item)
+                db.session.commit()
+                return {"message": "The item has been created"}, 201
+            except Exception as e:
+                return str(e)
 
 
 class ItemsUpdate(Resource):
