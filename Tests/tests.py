@@ -18,7 +18,7 @@ class BaseTestCase(unittest.TestCase):
         with flask_app.app_context():
             # create a user
             user_data_payload = {"first_name": "Sharon", "last_name": "Njihia",
-                       "email": "sharonkaren@gmail.com", "password": "password"}
+                                 "email": "sharonkaren@gmail.com", "password": "password"}
             self.client.post(url_for('user_registration'), data=json.dumps(user_data_payload),
                              content_type='application/json')
             # get auth token
@@ -66,7 +66,7 @@ class TestBucketList(BaseTestCase):
         """ Test if a user can create a bucket list"""
         # create a bucket list
         with flask_app.app_context():
-            new_bucketlist_payload = {"bucket_list_id": 234, "bucket_list_name": "sharon", "created_by": 10012}
+            new_bucketlist_payload = {"bucket_list_name": "sharon"}
             response = self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(new_bucketlist_payload),
                                         headers={'Content-Type': 'application/json', 'Authorization': self.token})
             self.assertEqual(response.status_code, 201)
@@ -102,11 +102,11 @@ class TestSingleBucketList(BaseTestCase):
         """ Test that the user can get a single bucket list """
         with flask_app.app_context():
             # create a bucket list
-            new_bucket_list_payload = {"bucket_list_id": 100, "bucket_list_name": "sharon", "created_by": 10012}
+            new_bucket_list_payload = {"bucket_list_name": "sharon"}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(new_bucket_list_payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
             # get the single bucket list
-            response = self.client.get(url_for('single_bucket_list', id=100),
+            response = self.client.get(url_for('single_bucket_list', id=1),
                                        headers={'Content-Type': 'application/json', 'Authorization': self.token}
                                        )
             self.assertEqual(response.status_code, 200)
@@ -116,10 +116,10 @@ class TestSingleBucketList(BaseTestCase):
         with flask_app.app_context():
 
             # create a bucket list
-            new_bucket_list_payload = {"bucket_list_id": 101, "bucket_list_name": "sharon", "created_by": 10012}
+            new_bucket_list_payload = {"bucket_list_name": "sharon"}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(new_bucket_list_payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
-            response = self.client.delete(url_for('single_bucket_list', id=101),
+            response = self.client.delete(url_for('single_bucket_list', id=1),
                                           headers={'Content-Type': 'application/json', 'Authorization': self.token})
             self.assertEqual(response.status_code, 200)
 
@@ -138,7 +138,7 @@ class TestItemResource(BaseTestCase):
 
         with flask_app.app_context():
             # create a bucket list
-            new_item_payload = {"bucket_list_id": 103, "bucket_list_name": "sharon", "created_by": 10012}
+            new_item_payload = {"bucket_list_name": "sharon"}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(new_item_payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
             # create a bucket list item
@@ -153,7 +153,7 @@ class TestItemResource(BaseTestCase):
 
     def test_that_the_user_cannot_enter_a_bucket_list_item_with_no_existing_bucket_list(self):
         """ Test that the user can not enter a bucket list item for a non existing bucket list """
-        item_payload = {"list_id": 900, "item_name": "Valentine's day", "completed": "True"}
+        item_payload = {"item_name": "Valentine's day", "completed": "True"}
         with flask_app.app_context():
             response = self.client.post(url_for('items', id=10), data=json.dumps(item_payload),
                                         headers={'Content-Type': 'application/json', 'Authorization': self.token}
@@ -173,17 +173,17 @@ class TestItemsUpdate(BaseTestCase):
         """ Test that the user can delete a bucket list item """
         with flask_app.app_context():
             # create a bucket list
-            payload = {"bucket_list_id": 103, "bucket_list_name": "sharon", "created_by": 10012}
+            payload = {"bucket_list_name": "sharon"}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
 
             # create a bucket_list_item
-            item_payload = {"list_id": 190, "item_name": "Valentine's day", "completed": "True"}
-            self.client.post(url_for('items', id=103), data=json.dumps(item_payload),
+            item_payload = {"item_name": "Valentine's day", "completed": "True"}
+            self.client.post(url_for('items', id=2), data=json.dumps(item_payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
 
             # delete the bucket list item
-            response = self.client.delete(url_for('items_update', id=103, item_id=190),
+            response = self.client.delete(url_for('items_update', id=2, item_id=1),
                                           headers={'Content-Type': 'application/json', 'Authorization': self.token})
             self.assertEqual(response.status_code, 200)
 
@@ -191,17 +191,17 @@ class TestItemsUpdate(BaseTestCase):
         """ Test if the user can update a bucket list item"""
         with flask_app.app_context():
             # create a bucket list
-            payload = {"bucket_list_id": 103, "bucket_list_name": "sharon", "created_by": 10012}
+            payload = {"bucket_list_name": "sharon"}
             self.client.post(url_for('get_and_post_bucket_list'), data=json.dumps(payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
 
             # create the bucket list item
-            item_payload = {"list_id": 90, "item_name": "Valentine's day", "completed": "True"}
-            self.client.post(url_for('items', id=103), data=json.dumps(item_payload),
+            item_payload = {"item_name": "Valentine's day", "completed": "True"}
+            self.client.post(url_for('items', id=2), data=json.dumps(item_payload),
                              headers={'Content-Type': 'application/json', 'Authorization': self.token})
             # edit the bucket list item
             update_item_payload = {"item_name": "XYZ", "completed": "False"}
-            list_response = self.client.put(url_for('items_update', id=103, item_id=90),
+            list_response = self.client.put(url_for('items_update', id=2, item_id=1),
                                             data=json.dumps(update_item_payload),
                                             headers={'Content-Type': 'application/json', 'Authorization': self.token}
                                             )
