@@ -95,4 +95,4 @@ def validate_user_input_for_items(func):
         elif items_data["item_name"] == "" or items_data["completed"] == "":
             return{"message": "You have to provide all the item name and the completed status"}, 400
         return func(*args, **kwargs)
-    return validate_list_data
+    return validate_list_data 
