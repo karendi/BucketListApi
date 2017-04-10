@@ -1,7 +1,5 @@
 from functools import wraps
 from flask import request
-from . import models
-from . import db
 
 """ Validation decorators for the data
  being posted by the user"""
@@ -52,10 +50,10 @@ def validate_bucket_list_data(func):
         bucket_list_data = request.get_json()
         if not bucket_list_data:
             return {"message": "You have to provide the required data"}, 400
-        elif "bucket_list_id" not in bucket_list_data or "bucket_list_name" not in bucket_list_data:
-            return {"message": "You have to provide the required data"}, 400
-        elif bucket_list_data["bucket_list_id"] == ""or bucket_list_data["bucket_list_name"] == "":
-            return {"message": "You have to provide all the required data"}, 400
+        elif "bucket_list_name" not in bucket_list_data:
+            return {"message": "You have to provide the bucket list name"}, 400
+        elif bucket_list_data["bucket_list_name"] == "":
+            return {"message": "You have to provide the bucket list name"}, 400
         return func(*args, **kwargs)
     return validate_bucket_list
 
@@ -66,15 +64,25 @@ def validate_get_bucket_list_data(func):
     def validate_data(*args, **kwargs):
         limit_of_items = request.args.get('limit')
         page_no = request.args.get('page')
-        query = request.args.get('q')
-        if not isinstance(limit_of_items, int):
-            return {"message": "The limit must be an integer"}, 400
-        elif not isinstance(page_no, int):
-            return {"message":"The page number should be an integer"}, 400
-        elif not isinstance(query, str):
-            return {"message": "The query parameter should be a string"}, 400
-        return func(*args, **kwargs)
+        if limit_of_items and page_no :
+            if limit_of_items.isdigit() and page_no.isdigit():
+                return func(*args, **kwargs)
+            elif not limit_of_items.isdigit() or not page_no.isdigit():
+                return {"message": "The limit and page number must be integers"}
+        else:
+            return func(*args, **kwargs)
     return validate_data
+
+
+def validate_bucket_list_update_data(func):
+    """ validates data that is required to update a bucket list"""
+    @wraps(func)
+    def validate_bucket_list_update_data(*args, **kwargs):
+        update_data = request.json
+        if not update_data:
+            return {"message": "You have to provide the bucket list name"}
+        return func(*args, **kwargs)
+    return validate_bucket_list_update_data
 
 
 def validate_user_input_for_items(func):
@@ -82,20 +90,9 @@ def validate_user_input_for_items(func):
     @wraps(func)
     def validate_list_data(*args, **kwargs):
         items_data = request.json
-        if "list_id" not in items_data or "item_name" not in items_data or "completed" not in items_data:
-            return {"message": "You have to provide all the required information"}, 400
-        elif items_data["list_id"] == "" or items_data["item_name"] == "" or items_data["completed"] == "":
-            return{"message": "Enter all the required data"}, 400
+        if "item_name" not in items_data or "completed" not in items_data:
+            return {"message": "You have to provide all the item name and the completed status"}, 400
+        elif items_data["item_name"] == "" or items_data["completed"] == "":
+            return{"message": "You have to provide all the item name and the completed status"}, 400
         return func(*args, **kwargs)
-    return validate_list_data
-
-
-
-
-
-
-
-
-
-
-
+    return validate_list_data 
