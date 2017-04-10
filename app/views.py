@@ -1,4 +1,5 @@
 import datetime
+import json
 from flask import request
 from flask_restful import Resource, marshal_with
 from flask_jwt import jwt_required, current_identity
@@ -73,7 +74,7 @@ class BucketList(Resource):
                                                 )
             db.session.add(new_bucket_list)
             db.session.commit()
-            return {"message": "You have created a new bucket list"}, 201
+            return {"created": bucket_list_data}, 201
 
         except Exception as e:
             return str(e)
@@ -135,7 +136,6 @@ class SingleBucketList(Resource):
     def delete(self, id):
         """ deletes a given bucket list """
         # pick the id of the bucket list
-        bucket_list_id = id
 
         delete_bucket_list = db.session.query(models.BucketList).filter_by(created_by=current_identity.user_id,
                                                                            bucket_list_id=id).first()
@@ -188,7 +188,7 @@ class Items(Resource):
                                         )
                 db.session.add(new_item)
                 db.session.commit()
-                return {"message": "The item has been created"}, 201
+                return {"created": items_data }, 201
             except Exception as e:
                 return str(e)
 
