@@ -1,5 +1,4 @@
 import datetime
-import json
 from flask import request
 from flask_restful import Resource, marshal_with
 from flask_jwt import jwt_required, current_identity
@@ -100,7 +99,7 @@ class BucketList(Resource):
                 bkts = [bucket for bucket in buckets]
                 return bkts, 200
             else:
-                return {"message": "Bucket List '{0}'can not be found".format(query)}, 404
+                return {"message": "Bucket List '{0}'can not be found".format(query)}, 200
         elif limit_of_items and page_no:
             """ Returns all the bucket list"""
             all_bucket_list_results = models.BucketList.query.filter_by(created_by=current_identity.user_id). \
@@ -110,7 +109,7 @@ class BucketList(Resource):
                 bkts = [bucket for bucket in buckets]
                 return bkts, 200
             else:
-                return {"message": "Bucket Lists can not be found"}, 404
+                return {"message": "Bucket Lists can not be found"}, 200
         else:
             "Return all the bucket lists without pagination"
             all_bucket_lists_no_pagination = models.BucketList.query.filter_by(
@@ -118,7 +117,7 @@ class BucketList(Resource):
             if all_bucket_lists_no_pagination:
                 return all_bucket_lists_no_pagination, 200
             else:
-                return {"message": "Bucket Lists cannot be found"}, 404
+                return {"message": "Bucket Lists cannot be found"}, 200
 
 
 class SingleBucketList(Resource):
@@ -129,7 +128,7 @@ class SingleBucketList(Resource):
         bucket_list = db.session.query(models.BucketList).filter_by(created_by=current_identity.user_id,
                                                                     bucket_list_id=id).first()
         if bucket_list is None:
-            return {"message": "The bucket list does not exist"}, 404
+            return {"message": "The bucket list does not exist"}, 200
         return bucket_list, 200
 
     @jwt_required()
@@ -160,7 +159,7 @@ class SingleBucketList(Resource):
             try:
                 update_bucket_list.bucket_list_name = bucket_list_name
                 db.session.commit()
-                return {"message": "The bucket list was updated successfully"}
+                return {"message": "The bucket list was updated successfully"}, 200
             except Exception as e:
                 return str(e)
 
